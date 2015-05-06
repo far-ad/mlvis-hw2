@@ -39,7 +39,7 @@ if __name__ == '__main__':
 	net = caffe.Classifier(MODEL_FILE, PRETRAINED,
 			       mean=np.load(caffe_root + 'python/caffe/imagenet/ilsvrc_2012_mean.npy').mean(1).mean(1),
 			       channel_swap=(2,1,0),
-			       raw_scale=195,
+			       raw_scale=255,
 			       image_dims=(256, 256))
 
 	print('==> loading images...')
