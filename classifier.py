@@ -51,17 +51,42 @@ if __name__ == '__main__':
 	print('==> analyzing images')
 	predictions = net.predict(input_images)  # predict takes any number of images, and formats them for the Caffe net automatically
 
-	with open('results.csv', 'w') as f:
-		f.write('file name,class,probability,entropy\n')
-		# i: image counter
+	# output
+	if len(sys.argv) < 2:
+		# screen output
 		i = 0
 		for prediction in predictions:
-			#plt.plot(prediction)
-			f.write('\\texttt{%s},' % (IMAGE_FILES[i].split('/')[-1],))
-			f.write(classes[prediction.argmax()].split(',')[0] + ',')
-			f.write('%.3f,' % max(prediction))
-			f.write('%.3f\n' % entropy(prediction))
-			#if input_classes[i] is not None:
-				#print('\tclassification costs: %.3f' % costs(input_classes[i]-1, prediction))
+			print('')
+			print('image: %s' % IMAGE_FILES[i].split('/')[-1])
+			print('\tclass: %s' % classes[prediction.argmax()])
+			print('\tprobability: %.3f' % max(prediction))
+			print('\tentropy: %.3f' % entropy(prediction))
 			i += 1
+	elif sys.argv[1] == 'csv':
+		with open('results.csv', 'w') as f:
+			f.write('file name,class,probability,entropy\n')
+			# i: image counter
+			i = 0
+			for prediction in predictions:
+				#plt.plot(prediction)
+				f.write('\\texttt{%s},' % (IMAGE_FILES[i].split('/')[-1].replace('_', '\\_'),))
+				f.write(classes[prediction.argmax()].split(',')[0] + ',')
+				f.write('%.3f,' % max(prediction))
+				f.write('%.3f\n' % entropy(prediction))
+				#if input_classes[i] is not None:
+					#print('\tclassification costs: %.3f' % costs(input_classes[i]-1, prediction))
+				i += 1
+	elif sys.argv[1] == 'latex':
+		with open('results.tex', 'w') as f:
+			f.write('\\begin{tabular}{clll}\n')
+			f.write('file name&class&probability&entropy \\\\\n')
+			f.write('\\hline')
+			i = 0
+			for prediction in predictions:
+				f.write('\\texttt{%s}&' % (IMAGE_FILES[i].split('/')[-1].replace('_', '\\_'),))
+				f.write(classes[prediction.argmax()] + '&')
+				f.write('%.3f&' % max(prediction))
+				f.write('%.3f \\\\\n' % entropy(prediction))
+				i += 1
+			f.write('\\end{tabular}\n')
 
