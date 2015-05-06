@@ -51,16 +51,17 @@ if __name__ == '__main__':
 	print('==> analyzing images')
 	predictions = net.predict(input_images)  # predict takes any number of images, and formats them for the Caffe net automatically
 
-	# i: image counter
-	i = 0
-	for prediction in predictions:
-		#plt.plot(prediction)
-		print('image %d:' % i)
-		print('\tpredicted class: %s' % classes[prediction.argmax()])
-		print('\tpredicted probability: %.3f' % max(prediction))
-		print('\tpredicted entropy: %.3f' % entropy(prediction))
-		if input_classes[i] is not None:
-			print('\tclassification costs: %.3f' % costs(input_classes[i]-1, prediction))
-		print('')
-		i += 1
+	with open('results.csv', 'w') as f:
+		f.write('file name,class,probability,entropy\n')
+		# i: image counter
+		i = 0
+		for prediction in predictions:
+			#plt.plot(prediction)
+			f.write('\\texttt{%s},' % (IMAGE_FILES[i].split('/')[-1],))
+			f.write(classes[prediction.argmax()].split(',')[0] + ',')
+			f.write('%.3f,' % max(prediction))
+			f.write('%.3f\n' % entropy(prediction))
+			#if input_classes[i] is not None:
+				#print('\tclassification costs: %.3f' % costs(input_classes[i]-1, prediction))
+			i += 1
 
